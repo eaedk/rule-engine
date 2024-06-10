@@ -1,6 +1,6 @@
 # app/api/v0/endpoints/rules.py
 
-from typing import List
+from typing import List, Union
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
@@ -18,13 +18,38 @@ def get_db():
         db.close()
 
 
-@router.post("/", response_model=Rule)
-def create_new_rule(rule: RuleCreate, db: Session = Depends(get_db)):
-    return crud.create_rule(db, rule)
+@router.post("/", response_model=Union[Rule, List[Rule]])
+def create_new_rule(
+    rules: Union[RuleCreate, List[RuleCreate]], db: Session = Depends(get_db)
+):
+    """
+    Create a new rule or multiple rules.
+
+    Args:
+        rules (Union[RuleCreate, List[RuleCreate]]): A single rule or a list of rules to create.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        Union[Rule, List[Rule]]: The created rule(s).
+    """
+    if isinstance(rules, list):
+        return crud.create_multiple_rules(db, rules)
+    else:
+        return crud.create_rule(db, rules)
 
 
 @router.get("/{rule_id}", response_model=Rule)
 def read_rule(rule_id: int, db: Session = Depends(get_db)):
+    """
+    Read a rule by its ID.
+
+    Args:
+        rule_id (int): The ID of the rule to read.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        Rule: The rule with the specified ID.
+    """
     db_rule = crud.get_rule(db, rule_id)
     if db_rule is None:
         raise HTTPException(status_code=404, detail="Rule not found")
