@@ -16,7 +16,7 @@ def test_check_transaction_approved():
         "phone_number": "1234567890",
         "ip_address": "127.0.0.1",
         "email_address": "test@example.ci",
-        "amount": 100,
+        "amount": 1000,
     }
 
     response = client.post("/v0/check-transaction", json=transaction_data)
