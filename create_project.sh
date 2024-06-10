@@ -174,7 +174,7 @@ class Transaction(TransactionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 EOL
 
 # rule_engine.py content
