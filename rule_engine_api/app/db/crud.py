@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db import models
 from app.schemas import transaction
-
+from typing import List
 from app.db.models import Rule
 from app.schemas.rule import RuleCreate, RuleUpdate
 
@@ -22,11 +22,28 @@ def create_transaction(db: Session, transaction: transaction.TransactionCreate):
 
 
 def create_rule(db: Session, rule: RuleCreate):
+    """
+    Create a new rule.
+
+    Args:
+        db (Session): SQLAlchemy database session.
+        rule (RuleCreate): The data for the new rule.
+
+    Returns:
+        Rule: The created rule.
+    """
     db_rule = Rule(**rule.dict())
     db.add(db_rule)
     db.commit()
     db.refresh(db_rule)
     return db_rule
+
+
+def create_multiple_rules(db: Session, rules: List[RuleCreate]) -> List[Rule]:
+    db_rules = [Rule(**rule.dict()) for rule in rules]
+    db.bulk_save_objects(db_rules)
+    db.commit()
+    return db_rules
 
 
 def get_rule(db: Session, rule_id: int):
