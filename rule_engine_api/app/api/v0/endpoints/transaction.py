@@ -55,7 +55,7 @@ async def check_transaction(
         )
     else:
         rejection_message = f"Transaction rejected: {check['message']}"
-        logger.error("Transaction rejected: %s", transaction)
+        logger.info("Transaction rejected: %s", transaction)
         return StandardResponse(
             status="rejected", status_code=400, message=rejection_message
         )
