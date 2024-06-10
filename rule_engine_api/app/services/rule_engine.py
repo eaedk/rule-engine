@@ -15,15 +15,15 @@ def apply_rules(
     Returns:
         dict: Dictionary containing the evaluation result with 'has_succeeded' flag and 'message'.
     """
-    fail_message = ""
+    fail_messages = []
     for rule in rules:
         try:
             if not eval(rule.rule, {"transaction": transaction}):
-                fail_message += f"\n{rule.description}"
+                fail_messages.append(rule.description)
         except Exception as e:
-            fail_message += f"\n'{rule.description}' ==> {e}"
+            fail_messages.append(f"'{rule.description}' ==> {e}")
 
     return {
-        "has_succeeded": not fail_message,
-        "message": fail_message,
+        "has_succeeded": len(fail_messages) == 0,
+        "message": "\n".join(fail_messages),
     }
