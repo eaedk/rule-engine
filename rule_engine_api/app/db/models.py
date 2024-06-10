@@ -20,3 +20,4 @@ class Rule(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String, index=True)
     rule = Column(Text, nullable=False)
+
