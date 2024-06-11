@@ -72,26 +72,58 @@ def read_rule(rule_id: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[Rule])
 def read_rules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    """
+    Read multiple rules with pagination.
+
+    Args:
+        skip (int, optional): Number of records to skip. Defaults to 0.
+        limit (int, optional): Maximum number of records to return. Defaults to 10.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        List[Rule]: List of rules.
+    """
     logger.info("Reading rules with skip=%s and limit=%s", skip, limit)
     rules = crud.get_rules(db, skip=skip, limit=limit)
     return rules
 
-
 @router.put("/{rule_id}", response_model=Rule)
 def update_existing_rule(rule_id: int, rule: RuleUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing rule by its ID.
+
+    Args:
+        rule_id (int): The ID of the rule to update.
+        rule (RuleUpdate): The rule data to update.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        Rule: The updated rule.
+    """
     logger.info("Updating rule with ID: %s", rule_id)
     db_rule = crud.update_rule(db, rule_id, rule)
     if db_rule is None:
+        logger.error("Rule not found with ID: %s", rule_id)
         raise HTTPException(status_code=404, detail="Rule not found")
     logger.info("Rule updated successfully")
     return db_rule
 
-
 @router.delete("/{rule_id}", response_model=Rule)
 def delete_existing_rule(rule_id: int, db: Session = Depends(get_db)):
+    """
+    Delete an existing rule by its ID.
+
+    Args:
+        rule_id (int): The ID of the rule to delete.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        Rule: The deleted rule.
+    """
     logger.info("Deleting rule with ID: %s", rule_id)
     db_rule = crud.delete_rule(db, rule_id)
     if db_rule is None:
+        logger.error("Rule not found with ID: %s", rule_id)
         raise HTTPException(status_code=404, detail="Rule not found")
     logger.info("Rule deleted successfully")
     return db_rule
