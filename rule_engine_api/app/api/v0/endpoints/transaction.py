@@ -5,7 +5,7 @@ from app.db.session import SessionLocal
 from app.db import crud
 from app.schemas.transaction import TransactionCreate
 from app.services.rule_engine import apply_rules
-from app.responses import StandardResponse
+from app.schemas.responses import StandardResponse
 import asyncio
 
 # Configure logging
