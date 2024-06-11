@@ -49,13 +49,13 @@ async def check_transaction(
     check = await loop.run_in_executor(None, apply_rules, transaction_dict, rules)
 
     if check["has_succeeded"]:
-        logger.info("Transaction approved: %s", transaction)
+        logger.info("Transaction approved: %s", transaction_dict)
         return StandardResponse(
             status="approved", status_code=200, message="Transaction approved"
         )
     else:
         rejection_message = f"Transaction rejected: {check['message']}"
-        logger.info("Transaction rejected: %s", transaction)
+        logger.info("Transaction rejected: %s", transaction_dict)
         return StandardResponse(
             status="rejected", status_code=400, message=rejection_message
         )
