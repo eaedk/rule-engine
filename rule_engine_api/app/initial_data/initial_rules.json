@@ -1,0 +1,10 @@
+[
+  {
+    "description": "Transaction amount must be less than 1,500,000",
+    "rule": "transaction['amount'] < 1500000"
+  },
+  {
+    "description": "Email address must be from Côte d'Ivoire (ends with .ci domain)",
+    "rule": "transaction['email_address'].lower().endswith('.ci')"
+  }
+]

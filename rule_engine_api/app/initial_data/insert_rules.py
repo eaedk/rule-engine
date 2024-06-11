@@ -1,29 +1,34 @@
 # app/initial_data/insert_rules.py
 
+import json
 from app.db.session import SessionLocal
 from app.db.models import Rule
 
-# Predefined rules to be inserted into the database
-rules = [
-    {
-        "description": "Transaction amount must be less than 1,500,000",
-        "rule": "transaction['amount'] < 1500000",
-    },
-    {
-        "description": "Email address must be from Côte d'Ivoire (ends with .ci domain)",
-        "rule": "transaction['email_address'].lower().endswith('.ci')",
-    },
-]
 
-
-def insert_initial_rules():
+def read_rules_from_json(file_path):
     """
-    Inserts predefined rules into the database if they do not already exist.
+    Read rules from a JSON file.
+
+    Args:
+        file_path (str): Path to the JSON file containing rules.
+
+    Returns:
+        list: List of rules read from the JSON file.
+    """
+    with open(file_path, "r") as file:
+        return json.load(file)
+
+
+def insert_initial_rules(rules):
+    """
+    Insert initial rules into the database.
+
+    Args:
+        rules (list): List of rules to insert into the database.
     """
     db = SessionLocal()
     try:
         for rule_data in rules:
-            # Check if the rule already exists
             existing_rule = (
                 db.query(Rule).filter_by(description=rule_data["description"]).first()
             )
@@ -33,3 +38,8 @@ def insert_initial_rules():
         db.commit()
     finally:
         db.close()
+
+
+if __name__ == "__main__":
+    rules = read_rules_from_json("initial_rules.json")
+    insert_initial_rules(rules)

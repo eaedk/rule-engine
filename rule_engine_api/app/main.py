@@ -9,11 +9,11 @@ from app.initial_data.insert_rules import insert_initial_rules
 # Create all database tables based on the models defined
 Base.metadata.create_all(bind=engine)
 
-# Insert initial rules into the database
-insert_initial_rules()
-
 # Initialize the FastAPI application
 app = FastAPI()
 
 # Include the API router with a prefix for versioning
 app.include_router(api_router, prefix="/v0")
+
+# Insert initial rules into the database
+insert_initial_rules()
