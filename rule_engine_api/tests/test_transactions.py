@@ -48,4 +48,4 @@ def test_check_transaction_rejected():
     response_json = response.json()
     assert response.status_code == 400
     assert response_json["status"] == "rejected"
-    assert response_json["statustatus_codes"] == 400
+    assert response_json["status_code"] == 400
