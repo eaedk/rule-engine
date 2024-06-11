@@ -75,8 +75,9 @@ The project follows a structured layout for easy navigation:
     docker-compose up --build
     ```
 
-4. Access the API at `http://localhost:8000/v0/`.
-
+4. Access the API documentation at:
+    `http://localhost:8000/docs`
+    
 ### Debugging
 
 To debug the application:
