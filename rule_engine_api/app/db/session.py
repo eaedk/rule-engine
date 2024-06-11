@@ -5,7 +5,11 @@ from app.core.config import settings
 
 SQLALCHEMY_DATABASE_URL = settings.database_url
 
+# Create the SQLAlchemy engine
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
+# Create a configured "Session" class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Create a base class for declarative class definitions
 Base = declarative_base()
