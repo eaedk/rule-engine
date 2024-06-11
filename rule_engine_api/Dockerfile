@@ -12,7 +12,5 @@ COPY . .
 # Set PYTHONPATH environment variable
 ENV PYTHONPATH=/code
 
-# # Run the insert_rules.py script to populate the database with initial rules
-# RUN python /code/scripts/insert_rules.py
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
