@@ -1,15 +1,17 @@
 #!/bin/bash
 
 # Create directory structure
-mkdir -p rule_engine_api/app/{api/v0,core,db,schemas,services}
-touch rule_engine_api/{docker-compose.yml,Dockerfile,.env,requirements.txt}
+mkdir -p rule_engine_api/app/{api/v0,core,db,schemas,services,initial_data}
+touch rule_engine_api/{docker-compose.yml,Dockerfile,.env,requirements.txt,readme.md,LICENSE}
 touch rule_engine_api/app/{main.py,__init__.py}
 touch rule_engine_api/app/api/{__init__.py}
 touch rule_engine_api/app/api/v0/{__init__.py,endpoints.py}
 touch rule_engine_api/app/core/{__init__.py,config.py}
 touch rule_engine_api/app/db/{__init__.py,models.py,session.py,crud.py}
-touch rule_engine_api/app/schemas/{__init__.py,transaction.py}
+touch rule_engine_api/app/schemas/{__init__.py,transaction.py,rule.py,responses.py}
 touch rule_engine_api/app/services/{__init__.py,rule_engine.py}
+touch rule_engine_api/app/initial_data/{__init__.py,insert_rules.py}
+touch rule_engine_api/tests/{test_transactions.py}
 
 # Populate files with initial content
 
@@ -135,6 +137,11 @@ class Rule(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String, index=True)
     rule = Column(Text, nullable=False)
+
+class StandardResponse(Base):
+    status: str
+    status_code: int
+    message: str
 EOL
 
 # crud.py content
@@ -177,6 +184,37 @@ class Transaction(TransactionBase):
         from_attributes = True
 EOL
 
+# rule.py content
+cat <<EOL > rule_engine_api/app/schemas/rule.py
+from pydantic import BaseModel
+
+class RuleBase(BaseModel):
+    description: str
+    rule: str
+
+class RuleCreate(RuleBase):
+    pass
+
+class RuleUpdate(RuleBase):
+    pass
+
+class Rule(RuleBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+EOL
+
+# responses.py content
+cat <<EOL > rule_engine_api/app/schemas/responses.py
+from pydantic import BaseModel
+
+class StandardResponse(BaseModel):
+    status: str
+    status_code: int
+    message: str
+EOL
+
 # rule_engine.py content
 cat <<EOL > rule_engine_api/app/services/rule_engine.py
 from typing import List
@@ -198,7 +236,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal, engine
 from app.db import models, crud
-from app.schemas import transaction as transaction_schema
+from app.schemas import transaction as transaction_schema, rule as rule_schema
 from app.services.rule_engine import apply_rules
 
 router = APIRouter()
@@ -238,5 +276,3 @@ app = FastAPI()
 
 app.include_router(endpoints.router, prefix="/v0")
 EOL
-
-echo "Directory structure and files have been created successfully."
